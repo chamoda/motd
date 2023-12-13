@@ -1,9 +1,12 @@
 import MOTDData from "@/components/MOTDData";
 
-export default function Home() {
+export default async function Home() {  
+  const response = await fetch(process.env.URL + "/api")
+  const data = await response.json()
+  
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
-      <MOTDData />
+    <main>
+      <MOTDData data={data} />
     </main>
   );
 }
