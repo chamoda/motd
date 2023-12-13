@@ -13,22 +13,26 @@ export default function MOTDData({ data }) {
     message: data.message,
   });
 
+  const submitMessage = async () => {
+    const response = await fetch("/api/message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: status.message,
+        timestamp: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      }),
+    });
+  }
+
   const handleInputKeyDown = async (event: React.KeyboardEvent) => {
     if (event.key === "Enter") {
       if ((event.target as HTMLInputElement).value != "") {
         setState({ ...state, status: Status.Today });
 
         // Submit message using a fetch post request here
-        const response = await fetch("/api/message", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: status.message,
-            timestamp: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          }),
-        });
+	await submitMessage()
       }
     }
   };
