@@ -11,4 +11,3 @@ To start the development server run `npm run dev`
 ## Flowchart
 
 ![Flowchart](flowchart.png)
-

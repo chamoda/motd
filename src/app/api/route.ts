@@ -1,6 +1,5 @@
 export async function GET() {
-    return Response.json({
-	"message": "This is a message",
-    })
+  return Response.json({
+    message: "This is a message",
+  });
 }
-
