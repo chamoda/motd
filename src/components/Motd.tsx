@@ -8,7 +8,7 @@ export enum Status {
 }
 
 interface Data {
-  message: string;
+  message?: string;
 }
 
 export default function Motd({ data }: { data: Data }) {
@@ -16,6 +16,8 @@ export default function Motd({ data }: { data: Data }) {
     status: data.message ? Status.Today : Status.Input,
     message: data.message,
   });
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   async function submitMessage() {
     const response = await fetch("/api/message", {
@@ -33,7 +35,7 @@ export default function Motd({ data }: { data: Data }) {
   async function handleInputKeyDown(event: React.KeyboardEvent) {
     if (event.key === "Enter") {
       if ((event.target as HTMLInputElement).value != "") {
-        setState({ ...state, status: Status.Today });
+        setState({message: inputRef.current?.value, status: Status.Today });
 
         await submitMessage();
       }
@@ -52,9 +54,9 @@ export default function Motd({ data }: { data: Data }) {
           id="message"
           name="message"
           type="text"
-          value={state.message}
+          defaultValue={state.message}
           onKeyDown={handleInputKeyDown}
-          onChange={(e) => setState({ ...state, message: e.target.value })}
+	  ref={inputRef}
         />
       </>
     );

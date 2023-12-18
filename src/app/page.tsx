@@ -1,4 +1,4 @@
-import MOTDData from "@/components/MOTDData";
+import Motd from "@/components/Motd";
 
 export default async function Home() {
   const response = await fetch(process.env.URL + "/api/message");
@@ -6,7 +6,7 @@ export default async function Home() {
 
   return (
     <main>
-      <MOTDData data={data} />
+      <Motd data={data} />
     </main>
   );
 }
