@@ -1,66 +1,82 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 export enum Status {
   Input = "input",
   Today = "today",
 }
 
-export default function MOTDData({ data }) {
+interface Data {
+  message: string;
+}
+
+export default function Motd({ data }: { data: Data }) {
   const [state, setState] = useState({
     status: data.message ? Status.Today : Status.Input,
     message: data.message,
   });
 
-  const submitMessage = async () => {
+  async function submitMessage() {
     const response = await fetch("/api/message", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: status.message,
+        message: state.message,
         timestamp: Intl.DateTimeFormat().resolvedOptions().timeZone,
       }),
     });
   }
 
-  const handleInputKeyDown = async (event: React.KeyboardEvent) => {
+  async function handleInputKeyDown(event: React.KeyboardEvent) {
     if (event.key === "Enter") {
       if ((event.target as HTMLInputElement).value != "") {
         setState({ ...state, status: Status.Today });
 
-        // Submit message using a fetch post request here
-	await submitMessage()
+        await submitMessage();
       }
     }
-  };
+  }
 
-  const handleDouleClick = (event: React.MouseEvent) => {
+  function handleDouleClick(event: React.MouseEvent) {
     setState({ ...state, status: Status.Input });
-  };
+  }
 
-  return (
-    <div>
-      {state.status === Status.Input ? (
-        <>
-          <label htmlFor="message">What is your main focus for today?</label>
-          <input
-            id="message"
-            name="message"
-            type="text"
-            value={state.message}
-            onKeyDown={handleInputKeyDown}
-            onChange={(e) => setState({ ...state, message: e.target.value })}
-          />
-        </>
-      ) : (
-        <>
-          <div>TODAY</div>
-          <div onDoubleClick={handleDouleClick}>{state.message}</div>
-        </>
-      )}
-    </div>
-  );
+  function renderInput() {
+    return (
+      <>
+        <label htmlFor="message">What is your main focus for today?</label>
+        <input
+          id="message"
+          name="message"
+          type="text"
+          value={state.message}
+          onKeyDown={handleInputKeyDown}
+          onChange={(e) => setState({ ...state, message: e.target.value })}
+        />
+      </>
+    );
+  }
+
+  function renderToday() {
+    return (
+      <>
+        <div>TODAY</div>
+        <div onDoubleClick={handleDouleClick}>{state.message}</div>
+      </>
+    );
+  }
+
+  function render(status: Status) {
+    switch (status) {
+      case Status.Input:
+        return renderInput();
+      case Status.Today:
+        return renderToday();
+    }
+  }
+
+  return <div>{render(state.status)}</div>;
 }
